@@ -1,22 +1,56 @@
 import random
 import discord
+from discord.ext import commands
 
-bot = discord.Client()
+bot = commands.Bot(command_prefix="%%")
+
+textStimuli = {
+    "parker": "pedro"
+}
+
+
+def match_text(text):
+    for a in textStimuli:
+        if a == text:
+            return textStimuli[a]
+
 
 @bot.event
 async def on_ready():
     guild_count = 0
     for guild in bot.guilds:
         print(f"{guild.id} (name:{guild.name})")
-        guild_count = guild_count+1
-    print("Parker is in "+ str(guild_count)+" guilds.")
+        guild_count = guild_count + 1
+    print("Parker is in " + str(guild_count) + " guilds.")
+
 
 @bot.event
 async def on_message(message):
-    if message.content.lower() == "parker":
-        # sends message
-        await message.channel.send("pedro")
+    text = str(message.content).lower()
+    text = match_text(text)
+    if not text is None:
+        await message.channel.send(text)
+    await bot.process_commands(message)
+
+
+@bot.command()
+async def embed(ctx):
+    text1 = discord.Embed(
+        title="Information",
+        description="information stuff",
+        color=discord.Color.random())
+    text1.set_author(name="pp", icon_url="https://cdn.vox-cdn.com/thumbor/MZRJnpwAMIHQ5-XT4FwNv0rivw4=/1400x1400/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/19397812/1048232144.jpg.jpg")
+    text1.set_thumbnail(url="https://c.tenor.com/QqSkd-o9L8sAAAAC/aireu-wysi.gif")
+    text1.add_field(name="sleeper", value="hi", inline=False)
+    text1.set_footer(text="save me")
+    await ctx.send(embed=text1)
+
+
+# Games
+
+# Birthday
 bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU")
+
 '''def CowBull():
     list1 = []
     i = 1
