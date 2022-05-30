@@ -1,3 +1,4 @@
+import asyncio
 import random
 import discord
 from discord.ext import commands
@@ -47,11 +48,9 @@ async def embed(ctx):
 
 
 # Games
-
-# Birthday
-bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU")
-
-'''def CowBull():
+@bot.command()
+async def CowBull(ctx):
+    await ctx.channel.send("```Welcome to Cow and Bulls. Guess 4 Cows to win```")
     list1 = []
     i = 1
     list2 = []
@@ -66,11 +65,25 @@ bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU"
         cows=0
         while userinput > 9999 or userinput < 0:
             try:
-                userinput = int(input("Enter a number: "))
+                await ctx.channel.send("Enter a number between 0 and 9999")
+                userinput = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
+                userinput = int(userinput.content)
                 if userinput > 9999 or userinput < 0:
                     print("enter valid number")
-            except ValueError:
+                    await ctx.channel.send("enter valid number")
+            except (ValueError, TypeError) as e:
+                userinput = str(userinput.content).lower()
+                print (userinput)
+                if userinput == "quit":
+                    print("quitting")
+                    await ctx.channel.send("quitting")
+                    return -1
                 print("enter valid number")
+                await ctx.channel.send("enter valid number")
+                userinput = -1
+            except asyncio.TimeoutError:
+                await ctx.channel.send("Too late!")
+                return -1
         if userinput in range(100,1000):
             list2.append(0)
             list2+=[int(d) for d in str(userinput)]
@@ -92,7 +105,9 @@ bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU"
                 if indexnum >=4:
                     indexnum = 0
                     print(list2)
+                    await ctx.channel.send(list2)
                     print(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
+                    await ctx.channel.send(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
                     list2.clear()
                     userinput = 10000
                     break
@@ -102,9 +117,21 @@ bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU"
                 if indexnum >=4:
                     indexnum = 0
                     print(list2)
+                    #await ctx.channel.send(list2)
                     print(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
+                    await ctx.channel.send(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
                     list2.clear()
                     userinput = 10000
                     break
-        #print(list1) prints after cows
-CowBull()'''
+        print(list1) #prints after cows
+
+
+@bot.command()
+async def cab(ctx):
+    await CowBull(ctx)
+# Birthday
+bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU")
+
+
+
+
