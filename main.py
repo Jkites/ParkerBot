@@ -129,19 +129,20 @@ async def CowBull(ctx):
 @bot.command()
 async def cab(ctx):
     await CowBull(ctx)
-# Birthday
-bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU")
-'''#hangman game
-import random
-with open('SOWPOWSdict.txt', 'r') as dict:
-    line = dict.readline()
-    dict_list = []
-    while line:
-        dict_list.append(line.strip())
+
+
+
+
+@bot.command()
+async def Hangman(ctx):
+    with open('SOWPOWSdict.txt', 'r') as dict:
         line = dict.readline()
-word = dict_list[random.randint(0,len(dict_list)-1)]
-print(word)
-def Hangman():
+        dict_list = []
+        while line:
+            dict_list.append(line.strip())
+            line = dict.readline()
+    word = dict_list[random.randint(0,len(dict_list)-1)]
+    print(word)
     invalid = True
     word_list = list(word)
     guess_list = []
@@ -152,45 +153,62 @@ def Hangman():
     while game != 0:
         if guesses_left <= 0:
             print("Game Over")
+            await ctx.channel.send("Game Over")
             game = 0
             break
-        guess = input("Guess your letter: ")
-        while invalid == True:
-            if len(guess) > 1:
-                guess = input("Invalid. Guess your letter: ")
-                continue
-            else:
-                invalid = False
+        try:
+            await ctx.channel.send("Make a guess:")
+            guess = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
+            guess = str(guess.content)
+            print(guess)
+            while invalid == True:
+                if len(guess) > 1:
+                    await ctx.channel.send("Invalid. Guess your letter: ")
+                    guess = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
+                    guess = str(guess.content)
+                    continue
+                else:
+                    invalid = False
+        except asyncio.TimeoutError:
+            await ctx.channel.send("You took too long!")
+            return -1
         if guess in word_list and firstTime == 1:
             for x in range(len(word_list)):
                 if guess == word_list[x]:
                     guess_list.append(guess)
                 else:
                     guess_list.append("_")
-            print(str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ",""))
-            print("correct!")
-            print("you have " + str(guesses_left) + " incorrect guesses left")
+            await ctx.channel.send("```" + str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ","") + "```")
+            await ctx.channel.send("correct!")
+            await ctx.channel.send("you have " + str(guesses_left) + " incorrect guesses left")
             firstTime = 0
             continue
         elif guess not in word_list:
-            print("incorrect!")
+            await ctx.channel.send("incorrect!")
             guesses_left -=1
-            print("you have " + str(guesses_left) + " incorrect guesses left")
+            await ctx.channel.send("you have " + str(guesses_left) + " incorrect guesses left")
         if guess in word_list and firstTime != 1:
             if guess in guess_list:
-                print("already guessed!")
-                print(str(guess_list).replace("[", "").replace("'", "").replace(",", "").replace("]", "").replace(" ",""))
+                await ctx.channel.send("already guessed!")
+                await ctx.channel.send("```" + str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ","") + "```")
                 continue
             else:
                 for x in range(len(word_list)):
                     if guess == word_list[x]:
                         guess_list[x] = guess
-                print(str(guess_list).replace("[", "").replace("'", "").replace(",", "").replace("]", "").replace(" ", ""))
-                print("correct!")
-                print("you have " + str(guesses_left) + " incorrect guesses left")
+                await ctx.channel.send("```" + str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ","") + "```")
+                await ctx.channel.send("correct!")
+                await ctx.channel.send("you have " + str(guesses_left) + " incorrect guesses left")
                 if guess_list == word_list:
-                    print("You win")
-                    game = 0'''
+                    await ctx.channel.send("You win~!")
+                    game = 0
+
+
+# Birthday
+bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU")
+
+
+
 '''from bokeh.plotting import figure, show, output_file
 import json
 from collections import Counter
@@ -283,4 +301,3 @@ if __name__ == "__main__":
         else:
             print("not valid choice".title())
             continue'''
-
