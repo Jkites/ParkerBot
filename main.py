@@ -132,6 +132,146 @@ async def cab(ctx):
 # Birthday
 bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU")
 
-
-
+'''def Hangman():
+    invalid = True
+    word_list = list(word)
+    guess_list = []
+    game = 1
+    firstTime = 1
+    guesses_left = 6
+    print("_" * len(word))
+    while game != 0:
+        if guesses_left <= 0:
+            print("Game Over")
+            game = 0
+            break
+        guess = input("Guess your letter: ")
+        while invalid == True:
+            if len(guess) > 1:
+                guess = input("Invalid. Guess your letter: ")
+                continue
+            else:
+                invalid = False
+        if guess in word_list and firstTime == 1:
+            for x in range(len(word_list)):
+                if guess == word_list[x]:
+                    guess_list.append(guess)
+                else:
+                    guess_list.append("_")
+            print(str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ",""))
+            print("correct!")
+            print("you have " + str(guesses_left) + " incorrect guesses left")
+            firstTime = 0
+            continue
+        elif guess not in word_list:
+            print("incorrect!")
+            guesses_left -=1
+            print("you have " + str(guesses_left) + " incorrect guesses left")
+        if guess in word_list and firstTime != 1:
+            if guess in guess_list:
+                print("already guessed!")
+                print(str(guess_list).replace("[", "").replace("'", "").replace(",", "").replace("]", "").replace(" ",""))
+                continue
+            else:
+                for x in range(len(word_list)):
+                    if guess == word_list[x]:
+                        guess_list[x] = guess
+                print(str(guess_list).replace("[", "").replace("'", "").replace(",", "").replace("]", "").replace(" ", ""))
+                print("correct!")
+                print("you have " + str(guesses_left) + " incorrect guesses left")
+                if guess_list == word_list:
+                    print("You win")
+                    game = 0'''
+'''from bokeh.plotting import figure, show, output_file
+import json
+from collections import Counter
+birthday_dict = {
+    "Oliver": "07/01/04",
+    "Richard": "09/09/05",
+    "Kyle": "09/29/04",
+    "Jack": "06/10/03",
+}
+def LoadOldBirthdays():
+    with open("birthday_info.json", "r") as f:
+        global info
+        info = json.load(f)
+        return
+def CheckMonths():
+    #print(info)
+    month_dict = {
+        1 : "January",
+        2: "February",
+        3: "March",
+        4: "April",
+        5: "May",
+        6: "June",
+        7: "July",
+        8: "August",
+        9: "September",
+        10: "October",
+        11: "November",
+        12: "December",
+    }
+    month_list = []
+    for index in info:
+        month_list.append(list(info[index].split("/"))[0])
+    month_list = [int(index) for index in month_list]
+    month_list = [month_dict.get(index) for index in month_list]
+    print(Counter(month_list))
+    output_file("plot.html")
+    x_cat = []
+    y = []
+    for i in month_dict:
+        x_cat.append(month_dict[i])
+    x_list = month_list
+    for i in month_list:
+        y.append(Counter(month_list)[i])
+    p = figure(x_range=x_cat)
+    p.vbar(x=x_list, top=y, width=.5)
+    show(p)
+def AskBirthday(help="Who's birthday do you want to look up?\n"):
+    name = input(help)
+    name = name.title()
+    if name in info:
+        print("{}\'s birthday is {}".format(name,info.get(name)))
+    else:
+        print("{}\'s birthday is not in dictionary".format(name))
+    return
+def AddEntry():
+    name = input("Who do you want to add to the Birthday dictionary?\n")
+    name = name.title()
+    date = input("When was {} born? Enter in mm/dd/yy format:\n".format(name))
+    info[name] = date
+    with open("birthday_info.json","w") as f:
+        json.dump(info, f)
+    print("{} was added to the birthday list".format(name))
+if __name__ == "__main__":
+    LoadOldBirthdays()
+    Quit = 0
+    print("Welcome to the birthday dictionary. We know the birthdays of: ")
+    for x in info.keys():
+        print(x)
+    AskBirthday()
+    while Quit == 0:
+        nextAction = input("What would you like to do next? Add, Find, Check, Quit:\n")
+        nextAction = nextAction.title()
+        if nextAction == "Add":
+            AddEntry()
+            continue
+        elif nextAction == "Find":
+            print("We know the birthdays of: ")
+            for x in info.keys():
+                print(x)
+            AskBirthday()
+            continue
+        elif nextAction == "Quit":
+            print("Quitting")
+            Quit = 1
+            break
+        elif nextAction == "Check":
+            CheckMonths()
+            continue
+        else:
+            print("not valid choice".title())
+            continue'''
 
