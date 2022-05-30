@@ -131,8 +131,17 @@ async def cab(ctx):
     await CowBull(ctx)
 # Birthday
 bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU")
-
-'''def Hangman():
+'''#hangman game
+import random
+with open('SOWPOWSdict.txt', 'r') as dict:
+    line = dict.readline()
+    dict_list = []
+    while line:
+        dict_list.append(line.strip())
+        line = dict.readline()
+word = dict_list[random.randint(0,len(dict_list)-1)]
+print(word)
+def Hangman():
     invalid = True
     word_list = list(word)
     guess_list = []
