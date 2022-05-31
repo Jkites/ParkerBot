@@ -39,7 +39,7 @@ async def embed(ctx):
     text1 = discord.Embed(
         title="Information",
         description="information stuff",
-        color=discord.Color.random())
+        color=discord.Color("0xc27c0e"))
     text1.set_author(name="pp", icon_url="https://cdn.vox-cdn.com/thumbor/MZRJnpwAMIHQ5-XT4FwNv0rivw4=/1400x1400/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/19397812/1048232144.jpg.jpg")
     text1.set_thumbnail(url="https://c.tenor.com/QqSkd-o9L8sAAAAC/aireu-wysi.gif")
     text1.add_field(name="sleeper", value="hi", inline=False)
@@ -130,8 +130,13 @@ async def CowBull(ctx):
 async def cab(ctx):
     await CowBull(ctx)
 
+@bot.command()
+async def hm(ctx):
+    await Hangman(ctx)
 
-
+@bot.command()
+async def hangman(ctx):
+    await Hangman(ctx)
 
 @bot.command()
 async def Hangman(ctx):
@@ -202,6 +207,9 @@ async def Hangman(ctx):
                 if guess_list == word_list:
                     await ctx.channel.send("You win~!")
                     game = 0
+
+
+
 
 
 # Birthday
