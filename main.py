@@ -1,6 +1,8 @@
 import asyncio
 import random
 import discord
+import json
+from collections import Counter
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix="%%")
@@ -8,6 +10,7 @@ bot = commands.Bot(command_prefix="%%")
 textStimuli = {
     "parker": "pedro"
 }
+
 
 
 def match_text(text):
@@ -112,14 +115,6 @@ async def CowBull(ctx):
         while indexnum < 4:
             if list1[indexnum] == list2[indexnum]:
                 cows+=1
-                '''if indexnum >=4:
-                    indexnum = 0
-                    print(list2)
-                    await ctx.channel.send(list2)
-                    print(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
-                    await ctx.channel.send(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
-                    list2.clear()
-                    userinput = 10000'''
             indexnum+=1
         indexnum = 0
         print(list2)
@@ -224,7 +219,109 @@ async def Hangman(ctx):
                 if guess_list == word_list:
                     await ctx.channel.send("You win~!")
                     game = 0
+@bot.command()
+async def birthday():
+    LoadOldBirthdays()
+    Quit = 0
+    print("Welcome to the birthday dictionary. We know the birthdays of: ")
+    await ctx.channel.send("Welcome to the birthday dictionary. We know the birthdays of: ")
+    for x in info.keys():
+        print(x)
+        await ctx.channel.send(x)
+    AskBirthday()
+    while Quit == 0:
+        try:
+            ctx.channel.send("What would you like to do next? Add, Find, Check, Quit:")
+            nextAction = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
+            nextAction = str(nextAction.content).title()
+        except asyncio.TimeoutError:
+            await ctx.channel.send("You took too long!")
+            return -1
+        if nextAction == "Add":
+            await AddEntry()
+            continue
+        elif nextAction == "Find":
+            print("We know the birthdays of: ")
+            for x in info.keys():
+                print(x)
+                await ctx.channel.send(x)
+            AskBirthday()
+            continue
+        elif nextAction == "Quit":
+            print("Quitting")
+            await ctx.channel.send("quitting")
+            Quit = 1
+            break
+        elif nextAction == "Check":
+            CheckMonths()
+            continue
+        else:
+            print("not valid choice".title())
+            await ctx.channel.send("Invalid")
+            continue
 
+def LoadOldBirthdays():
+    with open("birthday_info.json", "r") as f:
+        global info
+        info = json.load(f)
+        return
+
+def CheckMonths():
+    #print(info)
+    month_dict = {
+        1 : "January",
+        2: "February",
+        3: "March",
+        4: "April",
+        5: "May",
+        6: "June",
+        7: "July",
+        8: "August",
+        9: "September",
+        10: "October",
+        11: "November",
+        12: "December",
+    }
+    month_list = []
+    for index in info:
+        month_list.append(list(info[index].split("/"))[0])
+    month_list = [int(index) for index in month_list]
+    month_list = [month_dict.get(index) for index in month_list]
+    print(Counter(month_list))
+
+def AskBirthday(help="Whose birthday do you want to look up?\n"):
+    try:
+        await ctx.channel.send(help)
+        name = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
+        name = str(name.content).title()
+        if name in info:
+            print("{}\'s birthday is {}".format(name,info.get(name)))
+            await ctx.channel.send("{}\'s birthday is {}".format(name,info.get(name)))
+        else:
+            print("{}\'s birthday is not in dictionary".format(name))
+            await ctx.channel.send("{}\'s birthday is not in dictionary".format(name))
+    except asyncio.TimeoutError:
+        await ctx.channel.send("You took too long!")
+        return -1
+
+@bot.command()
+async def AddEntry(ctx): 
+    try:
+    #name = input("Who do you want to add to the Birthday dictionary?\n")
+        await ctx.channel.send("Who do you want to add to the Birthday dictionary?")
+        name = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
+        name = str(name.content).title()
+        await ctx.channel.send("When was {} born? Enter in mm/dd/yy format:\n".format(name))
+        date = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
+        date = str(date.content)
+    except asycio.TimeoutError:
+        await ctx.channel.send("You took too long!")
+        return -1
+    info[name] = date
+    with open("birthday_info.json","w") as f:
+        json.dump(info, f)
+    print("{} was added to the birthday list".format(name))
+    await ctx.channel.send("{} was added to the birthday list".format(name))
 
 
 
@@ -235,8 +332,7 @@ bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU"
 
 
 '''from bokeh.plotting import figure, show, output_file
-import json
-from collections import Counter
+
 birthday_dict = {
     "Oliver": "07/01/04",
     "Richard": "09/09/05",
@@ -281,7 +377,7 @@ def CheckMonths():
     p = figure(x_range=x_cat)
     p.vbar(x=x_list, top=y, width=.5)
     show(p)
-def AskBirthday(help="Who's birthday do you want to look up?\n"):
+def AskBirthday(help="Whose birthday do you want to look up?\n"):
     name = input(help)
     name = name.title()
     if name in info:
