@@ -140,7 +140,7 @@ async def hangman(ctx):
 
 @bot.command()
 async def Hangman(ctx):
-    with open('SOWPOWSdict.txt', 'r') as dict:
+    with open('hangman.txt', 'r') as dict:
         line = dict.readline()
         dict_list = []
         while line:
@@ -154,20 +154,23 @@ async def Hangman(ctx):
     game = 1
     firstTime = 1
     guesses_left = 6
-    print("_" * len(word))
+    print("_ " * len(word))
+    await ctx.channel.send("Welcome to hangman, type 0 to quit")
+    await ctx.channel.send("\_ " * len(word))
     while game != 0:
         if guesses_left <= 0:
             print("Game Over")
             await ctx.channel.send("Game Over")
+            await ctx.channel.send("The word  "+word)
             game = 0
             break
         try:
             await ctx.channel.send("Make a guess:")
             guess = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
-            guess = str(guess.content)
+            guess = str(guess.content).lower()
             print(guess)
             while invalid == True:
-                if len(guess) > 1:
+                if len(guess) > 1 and guess.lower()!= word:
                     await ctx.channel.send("Invalid. Guess your letter: ")
                     guess = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
                     guess = str(guess.content)
@@ -176,18 +179,26 @@ async def Hangman(ctx):
                     invalid = False
         except asyncio.TimeoutError:
             await ctx.channel.send("You took too long!")
+            await ctx.channel.send("The word was "+word)
+            return -1
+        if guess.lower() == word:
+            await ctx.channel.send("correct!")
+            await ctx.channel.send("You win~!")
             return -1
         if guess in word_list and firstTime == 1:
             for x in range(len(word_list)):
                 if guess == word_list[x]:
                     guess_list.append(guess)
                 else:
-                    guess_list.append("_")
-            await ctx.channel.send("```" + str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ","") + "```")
+                    guess_list.append("- ")
+            await ctx.channel.send("```" + str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ","") + " ```")
             await ctx.channel.send("correct!")
-            await ctx.channel.send("you have " + str(guesses_left) + " incorrect guesses left")
+            # await ctx.channel.send("you have " + str(guesses_left) + " incorrect guesses left")
             firstTime = 0
             continue
+        elif guess not in word_list and guess=="0":
+            await ctx.channel.send("quitting")
+            return -1
         elif guess not in word_list:
             await ctx.channel.send("incorrect!")
             guesses_left -=1
@@ -195,15 +206,15 @@ async def Hangman(ctx):
         if guess in word_list and firstTime != 1:
             if guess in guess_list:
                 await ctx.channel.send("already guessed!")
-                await ctx.channel.send("```" + str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ","") + "```")
+                await ctx.channel.send("```" + str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ","") + " ```")
                 continue
             else:
                 for x in range(len(word_list)):
                     if guess == word_list[x]:
                         guess_list[x] = guess
-                await ctx.channel.send("```" + str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ","") + "```")
+                await ctx.channel.send("```" + str(guess_list).replace("[", "").replace("'","").replace(",","").replace("]","").replace(" ","") + " ```")
                 await ctx.channel.send("correct!")
-                await ctx.channel.send("you have " + str(guesses_left) + " incorrect guesses left")
+                # await ctx.channel.send("you have " + str(guesses_left) + " incorrect guesses left")
                 if guess_list == word_list:
                     await ctx.channel.send("You win~!")
                     game = 0
