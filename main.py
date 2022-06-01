@@ -51,18 +51,22 @@ async def embed(ctx):
 @bot.command()
 async def CowBull(ctx):
     await ctx.channel.send("```Welcome to Cow and Bulls. Guess 4 Cows to win```")
+    await ctx.channel.send("```Cows are correct digits in the right place```")
+    await ctx.channel.send("```Bulls are correct digits in the wrong place```")
     list1 = []
     i = 1
     list2 = []
     userinput = 10000
-    bulls = 0
     cows = 0
     indexnum = 0
     while i <= 4:
-        list1.append(random.randint(0, 9))
-        i += 1
+        new_digit = random.randint(0, 9)
+        if new_digit not in list1:
+            list1.append(new_digit)
+            i += 1
     while cows != 4:
         cows=0
+        bulls=0
         while userinput > 9999 or userinput < 0:
             try:
                 await ctx.channel.send("Enter a number between 0 and 9999")
@@ -98,32 +102,34 @@ async def CowBull(ctx):
             list2 += [int(d) for d in str(userinput)]
         else:
             list2+=[int(d) for d in str(userinput)]
+        counter=0
+        for x in list2:
+            for y in list1:
+                if x == y and list2[counter]!=list1[counter]:
+                    bulls += 1
+            counter += 1
+        print(bulls)
         while indexnum < 4:
             if list1[indexnum] == list2[indexnum]:
                 cows+=1
-                indexnum+=1
-                if indexnum >=4:
+                '''if indexnum >=4:
                     indexnum = 0
                     print(list2)
                     await ctx.channel.send(list2)
                     print(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
                     await ctx.channel.send(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
                     list2.clear()
-                    userinput = 10000
-                    break
-            else:
-                bulls+=1
-                indexnum+=1
-                if indexnum >=4:
-                    indexnum = 0
-                    print(list2)
-                    #await ctx.channel.send(list2)
-                    print(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
-                    await ctx.channel.send(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
-                    list2.clear()
-                    userinput = 10000
-                    break
+                    userinput = 10000'''
+            indexnum+=1
+        indexnum = 0
+        print(list2)
+        #await ctx.channel.send(list2)
+        print(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
+        await ctx.channel.send(str(cows) + " cow(s) and " + str(bulls) + " bull(s)")
+        list2.clear()
+        userinput = 10000
         print(list1) #prints after cows
+    await ctx.channel.send("You win :)")
 
 
 @bot.command()
@@ -161,7 +167,7 @@ async def Hangman(ctx):
         if guesses_left <= 0:
             print("Game Over")
             await ctx.channel.send("Game Over")
-            await ctx.channel.send("The word  "+word)
+            await ctx.channel.send("The word was "+word)
             game = 0
             break
         try:
