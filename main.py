@@ -4,8 +4,10 @@ import discord
 import json
 from collections import Counter
 from discord.ext import commands
+from time import strftime
 
 bot = commands.Bot(command_prefix="%%")
+current_month = strftime('%B')
 
 textStimuli = {
     "parker": "pedro"
@@ -302,7 +304,20 @@ async def CheckMonths(ctx):
     month_list = [int(index) for index in month_list]
     month_list = [month_dict.get(index) for index in month_list]
     print(Counter(month_list))
-    await ctx.channel.send(Counter(month_list))
+    birthdaysInMonth = int(month_list.get(current_month))
+    if birthdaysInMonth > 0:
+        await ctx.channel.send("There are" + birthdaysInMonth + "birthdays this month!")
+        '''
+        birthdaysInMonthText = "The birthdays this month are: "
+        count = 0
+        while birthdaysInMonth > count:
+            birthdaysInMonthText.append()
+            count++
+        '''
+    else:
+        await ctx.channel.send("No birthdays this month :(")
+    
+
 
 
 async def AskBirthday(ctx):
