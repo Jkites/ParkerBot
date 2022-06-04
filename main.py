@@ -220,7 +220,7 @@ async def Hangman(ctx):
                     await ctx.channel.send("You win~!")
                     game = 0
 @bot.command()
-async def birthday():
+async def birthday(ctx):
     LoadOldBirthdays()
     Quit = 0
     print("Welcome to the birthday dictionary. We know the birthdays of: ")
@@ -228,24 +228,19 @@ async def birthday():
     for x in info.keys():
         print(x)
         await ctx.channel.send(x)
-    AskBirthday()
     while Quit == 0:
         try:
-            ctx.channel.send("What would you like to do next? Add, Find, Check, Quit:")
+            await ctx.channel.send("What would you like to do next? Add, Find, Check, Quit:")
             nextAction = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
             nextAction = str(nextAction.content).title()
         except asyncio.TimeoutError:
             await ctx.channel.send("You took too long!")
             return -1
         if nextAction == "Add":
-            await AddEntry()
+            await AddEntry(ctx)
             continue
         elif nextAction == "Find":
-            print("We know the birthdays of: ")
-            for x in info.keys():
-                print(x)
-                await ctx.channel.send(x)
-            AskBirthday()
+            await AskBirthday(ctx)
             continue
         elif nextAction == "Quit":
             print("Quitting")
@@ -253,12 +248,31 @@ async def birthday():
             Quit = 1
             break
         elif nextAction == "Check":
-            CheckMonths()
+            await CheckMonths(ctx)
             continue
         else:
             print("not valid choice".title())
             await ctx.channel.send("Invalid")
             continue
+
+
+async def AddEntry(ctx):
+    try:
+    #name = input("Who do you want to add to the Birthday dictionary?\n")
+        await ctx.channel.send("Who do you want to add to the Birthday dictionary?")
+        name = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
+        name = str(name.content).title()
+        await ctx.channel.send("When was {} born? Enter in mm/dd/yy format:\n".format(name))
+        date = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
+        date = str(date.content)
+    except asycio.TimeoutError:
+        await ctx.channel.send("You took too long!")
+        return -1
+    info[name] = date
+    with open("birthday_info.json","w") as f:
+        json.dump(info, f)
+    print("{} was added to the birthday list".format(name))
+    await ctx.channel.send("{} was added to the birthday list".format(name))
 
 def LoadOldBirthdays():
     with open("birthday_info.json", "r") as f:
@@ -266,7 +280,7 @@ def LoadOldBirthdays():
         info = json.load(f)
         return
 
-def CheckMonths():
+async def CheckMonths(ctx):
     #print(info)
     month_dict = {
         1 : "January",
@@ -288,10 +302,12 @@ def CheckMonths():
     month_list = [int(index) for index in month_list]
     month_list = [month_dict.get(index) for index in month_list]
     print(Counter(month_list))
+    await ctx.channel.send(Counter(month_list))
 
-def AskBirthday(help="Whose birthday do you want to look up?\n"):
+
+async def AskBirthday(ctx):
     try:
-        await ctx.channel.send(help)
+        await ctx.channel.send("Whose birthday do you want to know?")
         name = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
         name = str(name.content).title()
         if name in info:
@@ -304,24 +320,7 @@ def AskBirthday(help="Whose birthday do you want to look up?\n"):
         await ctx.channel.send("You took too long!")
         return -1
 
-@bot.command()
-async def AddEntry(ctx): 
-    try:
-    #name = input("Who do you want to add to the Birthday dictionary?\n")
-        await ctx.channel.send("Who do you want to add to the Birthday dictionary?")
-        name = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
-        name = str(name.content).title()
-        await ctx.channel.send("When was {} born? Enter in mm/dd/yy format:\n".format(name))
-        date = await bot.wait_for("message", check=lambda m: m.author == ctx.author, timeout=30)
-        date = str(date.content)
-    except asycio.TimeoutError:
-        await ctx.channel.send("You took too long!")
-        return -1
-    info[name] = date
-    with open("birthday_info.json","w") as f:
-        json.dump(info, f)
-    print("{} was added to the birthday list".format(name))
-    await ctx.channel.send("{} was added to the birthday list".format(name))
+
 
 
 
