@@ -341,7 +341,7 @@ async def AskBirthday(ctx):
 
 
 # Birthday
-bot.run("OTgwMjI2NjQ4OTU3OTM5NzUz.GPrRvd.tWWpLWs43DBIzxhC_3KVueKZqKwY9aKSOaMXRU")
+bot.run("token")
 
 
 
